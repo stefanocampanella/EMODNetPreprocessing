@@ -30,7 +30,7 @@ using Dates
 using JLD2
 
 # ╔═╡ 71818093-b3f6-4a87-97f7-bdaca574ebab
-md"""Settings file: $(@bind settingsfilepath TextField(default="../configs/nutrient_profiles.toml"))"""
+md"""Settings file: $(@bind settingsfilepath TextField(default="../configs/nutrients_profile.toml"))"""
 
 # ╔═╡ 7a327f9b-5aff-4067-8def-0f7bed5863f9
 settings = TOML.parsefile(settingsfilepath)
@@ -65,9 +65,9 @@ depths = emodnet2022["Depth"][:, :]
 # ╔═╡ 466261cc-4e50-4bc4-9088-ebba1698aa78
 mask = let
 	start_date, end_date = settings["filters"]["datetime"]
-	latmin, latmax = settings["filters"]["latitude"]
-	lonmin, lonmax = settings["filters"]["longitude"]
-	depthmin, depthmax = settings["filters"]["depth"]
+	latmin, latmax = get(settings["filters"], "latitude", [-Inf, Inf])
+	lonmin, lonmax = get(settings["filters"], "longitude", [-Inf, Inf])
+	depthmin, depthmax = get(settings["filters"], "depth", [-Inf, Inf])
 	m = trues(size(depths)...)
 	for index in eachindex(IndexCartesian(), depths)
 		if ismissing(depths[index]) || depths[index] < depthmin || depths[index] > depthmax
@@ -175,7 +175,16 @@ Dataset(settings["io"]["output"], "c") do ds
 end
 
 # ╔═╡ e5fcffc8-4171-40df-8d52-3be6e3bc354f
-jldsave("emodnet_nutrients.jld2"; data)
+let
+	df = Dict{String, Vector}()
+	for (key, value) in data
+		df[key] = value
+	end
+	df["datetime"] = datetime
+	df["cruise_id"] = cruise_id
+	df["platform_type"] = platform_type
+	jldsave("emodnet_nutrients.jld2"; df)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -642,7 +651,7 @@ version = "17.4.0+2"
 # ╠═3c01262b-c4b6-4f44-9c19-f2631c453922
 # ╠═f43b6400-b516-11ee-0ffd-ad6fe8cbd4d9
 # ╠═cb4a084a-3d03-4dff-91ad-dcab7366fbb6
-# ╠═71818093-b3f6-4a87-97f7-bdaca574ebab
+# ╟─71818093-b3f6-4a87-97f7-bdaca574ebab
 # ╠═7a327f9b-5aff-4067-8def-0f7bed5863f9
 # ╠═d48f2f00-586d-4237-8cb0-8becfae45de2
 # ╠═54af094d-22b1-4a46-ac85-f01ff258ab0f
