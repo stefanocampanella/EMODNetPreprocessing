@@ -1,0 +1,61 @@
+[filters]
+platforms = [
+    "man-powered small boat (3A)", 
+    "offshore structure (16)", 
+    "ship (30)", 
+    "research vessel (31)", 
+    "vessel of opportunity (32)", 
+    "self-propelled small boat (33)", 
+    "vessel at fixed position (34)", 
+    "vessel of opportunity on fixed route (35)", 
+    "fishing vessel (36)", 
+    "self-propelled boat (37)", 
+    "man-powered boat (38)", 
+    "naval vessel (39)", 
+    "moored surface buoy (41)", 
+    "subsurface mooring (43)", 
+    "fixed subsurface vertical profiler (45)", 
+    "mooring (48)"]
+datetime = [1999-01-01T00:00:00, 2022-12-31T23:59:59]
+latitude = [30, 46]
+longitude = [-5, 36]
+depth = [0, 5000]
+
+[[variables]]
+output = "phosphate"
+input = "Water_body_phosphate"
+qc = [49, 50]
+unit = "umol/l"
+range = [0, 10]
+
+[[variables]]
+output = "silicate"
+input = "Water_body_silicate"
+qc = [49, 50]
+unit = "umol/l"
+range = [0, 150]
+
+[[variables]]
+output = "alkalinity"
+input = "Water_body_total_alkalinity"
+qc = [49, 50]
+unit = "uEquiv/l"
+range = [0, 150]
+
+[[variables]]
+output = "dic"
+input = "Water_body_dissolved_inorganic_carbon"
+qc = [49, 50]
+unit = "umol/l"
+
+[[variables]]
+output = "salinity"
+input = "Water_body_salinity"
+qc = [49, 50]
+unit = "per mille"
+
+[[variables]]
+output = "temperature"
+input = "ITS_90_water_temperature"
+qc = [49, 50]
+unit = "degree C"
