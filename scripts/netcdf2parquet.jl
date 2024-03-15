@@ -228,7 +228,7 @@ let
     if seriestype == "timeseries"
         push!(allfilters, hiresfilter(datetime, Millisecond(Day(1)))) # drop stations with average time between points less than 1 day 
     else
-        push!(allfilters, hiresfilter(depth, 1.0)) # drop stations with average depth difference less than 1 meter
+        push!(allfilters, hiresfilter(depths, 1.0)) # drop stations with average depth difference less than 1 meter
     end
     applyfilters!(allfilters, df)
     @info "Writing data to $parquetoutputpath"

@@ -16,7 +16,7 @@ platforms = [
     "subsurface mooring (43)", 
     "fixed subsurface vertical profiler (45)", 
     "mooring (48)"]
-datetime = [1999-01-01T00:00:00, 2022-12-31T23:59:59]
+datetime = [1980-01-01T00:00:00, 2023-12-31T23:59:59]
 latitude = [30, 46]
 longitude = [-5, 36]
 depth = [0, 5000]
@@ -40,7 +40,6 @@ output = "alkalinity"
 input = "Water_body_total_alkalinity"
 qc = [49, 50]
 unit = "uEquiv/l"
-range = [0, 150]
 
 [[variables]]
 output = "dic"
