@@ -72,30 +72,31 @@ function hiresfilter(var, delta)
 end
 
 # Read command line arguments
-for (sym, arg) in zip([:seriestype, :settingspath, :ncinputpath, :parquetoutputpath], ARGS)
+for (sym, arg) in zip([:settingspath, :ncinputpath, :parquetoutputpath], ARGS)
     @eval $sym = $arg
 end
 
 # Read settings file and the input NetCDF file
 @info "Reading settings at $settingspath and input file at $ncinputpath"
 settings = TOML.parsefile(settingspath)
-emodnet2022 = NCDataset(ncinputpath, "r")
+emodnet = NCDataset(ncinputpath, "r")
+seriestype = "time_ISO8601" in keys(emodnet) ? "timeseries" : "profile"
 
 # Extract coordinates and measurements metadata from the NetCDF file
-instrument_info = map(stringfromvec, eachcol(emodnet2022["Instrument_Info"][:, :]))
+instrument_info = map(stringfromvec, eachcol(emodnet["Instrument_Info"][:, :]))
 instrument_type = map(s -> contains(s, r"(?i)DOXYWITX|DOKGWITX") ? "nut" : "probe" , instrument_info)
-cruise_id = map(stringfromvec, eachcol(emodnet2022["cruise_id"][:, :]))
-station_id = map(stringfromvec, eachcol(emodnet2022["station_id"][:, :]))
-platform_type = map(stringfromvec, eachcol(emodnet2022["Platform_type"][:, :]))
-latitude = emodnet2022["latitude"][:]
-longitude = emodnet2022["longitude"][:]
-depths = emodnet2022["Depth"][:, :]
+cruise_id = map(stringfromvec, eachcol(emodnet["cruise_id"][:, :]))
+station_id = map(stringfromvec, eachcol(emodnet["station_id"][:, :]))
+platform_type = map(stringfromvec, eachcol(emodnet["Platform_type"][:, :]))
+latitude = emodnet["latitude"][:]
+longitude = emodnet["longitude"][:]
+depths = emodnet["Depth"][:, :]
 
 # datetime is defined differently for timeseries and profile data
 if seriestype == "timeseries"
-    datetime = emodnet2022["time_ISO8601"][:, :]
+    datetime = emodnet["time_ISO8601"][:, :]
 elseif seriestype == "profile"
-    datetime = emodnet2022["date_time"][:]
+    datetime = emodnet["date_time"][:]
 end
 
 # Mask for valid data points, i.e. those that are not missing
@@ -138,13 +139,13 @@ begin
         @info "Processing $output_name"
         input_name = get(var, "input", missing)
         if !ismissing(input_name) 
-            if haskey(emodnet2022, input_name)
-                df[!, output_name] = emodnet2022[input_name][mask]
+            if haskey(emodnet, input_name)
+                df[!, output_name] = emodnet[input_name][mask]
             else
                 df[!, output_name] = Vector{Union{Missing, Float32}}(missing, npoints)
             end
-            if haskey(emodnet2022, input_name * "_qc")
-                df[!, output_name * "_qc"] = emodnet2022[input_name * "_qc"][mask]
+            if haskey(emodnet, input_name * "_qc")
+                df[!, output_name * "_qc"] = emodnet[input_name * "_qc"][mask]
             else
                 df[!, output_name * "_qc"] = Vector{Union{Missing, Float32}}(missing, npoints)
             end
@@ -228,7 +229,7 @@ let
     if seriestype == "timeseries"
         push!(allfilters, hiresfilter(datetime, Millisecond(Day(1)))) # drop stations with average time between points less than 1 day 
     else
-        push!(allfilters, hiresfilter(depths, 1.0)) # drop stations with average depth difference less than 1 meter
+        push!(allfilters, hiresfilter(depths, 2.1)) # drop stations with average depth difference less than 1 meter
     end
     applyfilters!(allfilters, df)
     @info "Writing data to $parquetoutputpath"

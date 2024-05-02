@@ -22,39 +22,63 @@ longitude = [-5, 36]
 depth = [0, 5000]
 
 [[variables]]
+output = "nitrate"
+input = "Water_body_nitrate"
+qc = [49, 50]
+range = [0, 150]
+
+[[variables]]
+output = "nitrite"
+input = "Water_body_nitrite"
+qc = [49, 50]
+range = [0, 15]
+
+[[variables]]
+output = "ammonium"
+input = "Water_body_ammonium"
+qc = [49, 50]
+range = [0, 30]
+
+[[variables]]
 output = "phosphate"
 input = "Water_body_phosphate"
 qc = [49, 50]
-unit = "umol/l"
 range = [0, 10]
 
 [[variables]]
 output = "silicate"
 input = "Water_body_silicate"
 qc = [49, 50]
-unit = "umol/l"
 range = [0, 150]
+
+[[variables]]
+output = "oxygen"
+input = "Water_body_dissolved_oxygen_concentration"
+qc = [49, 50]
+range = [20, 500]
+
+[[variables]]
+output = "chlorophyll"
+input = "Water_body_chlorophyll_a"
+qc = [49, 50]
+range = [0, 80]
 
 [[variables]]
 output = "alkalinity"
 input = "Water_body_total_alkalinity"
 qc = [49, 50]
-unit = "uEquiv/l"
 
 [[variables]]
 output = "dic"
 input = "Water_body_dissolved_inorganic_carbon"
 qc = [49, 50]
-unit = "umol/l"
 
 [[variables]]
 output = "salinity"
 input = "Water_body_salinity"
 qc = [49, 50]
-unit = "per mille"
 
 [[variables]]
 output = "temperature"
 input = "ITS_90_water_temperature"
 qc = [49, 50]
-unit = "degree C"
